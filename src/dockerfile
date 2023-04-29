@@ -1,0 +1,14 @@
+FROM nginx:latest
+
+COPY ./server/mini_server.c /home/dockle/
+# Part 5
+COPY ./nginx/nginx.conf /etc/nginx/nginx.conf 
+
+RUN useradd -g daemon -d /home/dockle -m -s /bin/bash dockle && chown -R dockle:daemon /var/cache/nginx/ /var/run/ /var/log/nginx/ && apt update && apt install -y build-essential libfcgi-dev spawn-fcgi && gcc -o /home/dockle/mini_server /home/dockle/mini_server.c -lfcgi && apt-get clean && rm -rf /var/lib/apt/lists/*
+# Part 5
+USER dockle
+
+WORKDIR /home/dockle
+
+CMD ["/bin/bash", "-c", "nginx -g 'daemon off;' | nginx -s reload | spawn-fcgi -p 8080 -n /home/dockle/mini_server"]
+

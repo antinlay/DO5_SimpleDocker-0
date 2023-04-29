@@ -1,0 +1,14 @@
+version: '3'
+services:
+  first-container:
+    build:
+      context: .
+      dockerfile: dockerfile
+  second-container:
+    image: nginx
+    ports:
+      - "80:8080"
+    volumes:
+      - ./nginx/part6/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - first-container
